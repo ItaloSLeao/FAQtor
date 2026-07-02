@@ -8,7 +8,7 @@ import numpy as np
 import pandas as pd
 from sklearn.metrics.pairwise import cosine_similarity
 
-from src.config import DEFAULT_CONFIDENCE_THRESHOLD, DEFAULT_TOP_K
+from src.config import DEFAULT_CONFIDENCE_THRESHOLD, DEFAULT_TOP_K, FALLBACK_MESSAGE
 from src.vectorizer import FAQVectorizer, train_vectorizer
 
 
@@ -44,8 +44,8 @@ class FAQRetriever:
         )
         return self
 
-    def search(self, query: str, top_k: int = DEFAULT_TOP_K) -> list[dict[str, Any]]:
-        """Return top-k FAQ rows ranked by cosine similarity."""
+    def search(self, query: str, top_k: int = DEFAULT_TOP_K) -> dict[str, Any]:
+        """Return ranked FAQ results with a confidence decision."""
         self._ensure_fitted()
         assert self.faq_dataframe is not None
         assert self.vectorizer is not None
@@ -53,9 +53,22 @@ class FAQRetriever:
 
         query_vector = self.vectorizer.transform(query)
         scores = cosine_similarity(query_vector, self.question_matrix).ravel()
+        top_k = min(max(1, top_k), len(scores))
         ranked_indices = np.argsort(scores)[::-1][:top_k]
+        results = [self._row_to_result(index, scores[index]) for index in ranked_indices]
+        top_result = results[0]
+        is_confident = top_result["score"] >= self.confidence_threshold
 
-        return [self._row_to_result(index, scores[index]) for index in ranked_indices]
+        return {
+            "query": query,
+            "answer": top_result["resposta"] if is_confident else FALLBACK_MESSAGE,
+            "is_confident": is_confident,
+            "top_result": top_result,
+            "results": results,
+            "score": top_result["score"],
+            "threshold": self.confidence_threshold,
+            "fallback_message": None if is_confident else FALLBACK_MESSAGE,
+        }
 
     def _row_to_result(self, index: int, score: float) -> dict[str, Any]:
         assert self.faq_dataframe is not None
