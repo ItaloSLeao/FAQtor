@@ -1,0 +1,2 @@
+"""FAQtor package."""
+
