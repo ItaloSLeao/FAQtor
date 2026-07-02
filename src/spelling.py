@@ -40,18 +40,18 @@ def suggest_terms(
     max_distance: int = 2,
 ) -> list[str]:
     """Suggest close vocabulary terms for query tokens."""
-    vocabulary_terms = sorted(
-        {
-            normalize_text(term)
-            for term in vocabulary
-            if normalize_text(term) and " " not in normalize_text(term)
-        },
-    )
+    vocabulary_set: set[str] = set()
+    for term in vocabulary:
+        normalized_term = normalize_text(term)
+        if normalized_term and " " not in normalized_term:
+            vocabulary_set.add(normalized_term)
+
+    vocabulary_terms = sorted(vocabulary_set)
     suggestions: list[str] = []
 
     for token in query_tokens:
         normalized_token = normalize_text(token)
-        if not normalized_token or normalized_token in vocabulary_terms:
+        if not normalized_token or normalized_token in vocabulary_set:
             continue
 
         candidates = [

@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+from typing import Any
+
 import pandas as pd
 import streamlit as st
 
@@ -39,7 +41,7 @@ def render_sidebar() -> None:
     st.sidebar.caption("FAQtor não usa LLMs nem APIs externas.")
 
 
-def render_results(response: dict) -> None:
+def render_results(response: dict[str, Any]) -> None:
     """Render search results."""
     top_result = response["top_result"]
 
