@@ -9,6 +9,8 @@ import pandas as pd
 from sklearn.metrics.pairwise import cosine_similarity
 
 from src.config import DEFAULT_CONFIDENCE_THRESHOLD, DEFAULT_TOP_K, FALLBACK_MESSAGE
+from src.preprocessing import tokenize
+from src.spelling import suggest_terms as suggest_close_terms
 from src.vectorizer import FAQVectorizer, train_vectorizer
 
 
@@ -58,6 +60,7 @@ class FAQRetriever:
         results = [self._row_to_result(index, scores[index]) for index in ranked_indices]
         top_result = results[0]
         is_confident = top_result["score"] >= self.confidence_threshold
+        suggestions = [] if is_confident else self.suggest_terms(query)
 
         return {
             "query": query,
@@ -68,7 +71,23 @@ class FAQRetriever:
             "score": top_result["score"],
             "threshold": self.confidence_threshold,
             "fallback_message": None if is_confident else FALLBACK_MESSAGE,
+            "suggestions": suggestions,
         }
+
+    def vocabulary(self) -> set[str]:
+        """Return learned vocabulary terms."""
+        self._ensure_fitted()
+        assert self.vectorizer is not None
+        return self.vectorizer.vocabulary()
+
+    def suggest_terms(self, query: str, max_distance: int = 2) -> list[str]:
+        """Suggest vocabulary terms close to query tokens."""
+        query_tokens = tokenize(query)
+        return suggest_close_terms(
+            query_tokens,
+            self.vocabulary(),
+            max_distance=max_distance,
+        )
 
     def _row_to_result(self, index: int, score: float) -> dict[str, Any]:
         assert self.faq_dataframe is not None
