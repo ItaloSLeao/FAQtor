@@ -32,9 +32,11 @@ O objetivo é demonstrar um pipeline completo e interpretável de PLN para pergu
 
 ## Base de dados
 
-A base `data/faq.csv` contém 40 perguntas e respostas de domínio acadêmico/universitário, cobrindo temas como matrícula, disciplinas, trancamento, histórico, TCC, estágio, biblioteca, monitoria, calendário acadêmico, sistema acadêmico e atividades complementares.
+A base `data/faq.csv` contém 156 perguntas e respostas de atendimento acadêmico/universitário, cobrindo temas como matrícula, disciplinas, documentos, avaliações, TCC, estágio, biblioteca, bolsas, laboratórios e outros serviços acadêmicos.
 
-A base `data/test_queries.csv` contém 36 consultas de teste, escritas como variações naturais das perguntas originais.
+A base `data/test_queries.csv` contém 152 consultas de teste, escritas como variações naturais das perguntas originais, incluindo linguagem informal, abreviações e pequenos erros de digitação.
+
+As categorias incluem matrícula, trancamento, histórico, disciplinas, aproveitamento, TCC, estágio, biblioteca, monitoria, calendário, sistema acadêmico, avaliações, documentos, ementas, pré-requisitos, segunda chamada, prova final, frequência, jubilamento, transferência, reingresso, mobilidade acadêmica, bolsas e auxílios, restaurante universitário, transporte, laboratórios, projetos de pesquisa, extensão, iniciação científica, atendimento docente, coordenação, secretaria acadêmica, ENADE, formatura, carteira estudantil, declarações, cancelamento de matrícula e dados cadastrais.
 
 ## Arquitetura do pipeline
 
@@ -161,10 +163,10 @@ Exemplo de relatório:
 
 ```text
 FAQtor - Relatório de avaliação
-Consultas avaliadas: 36
-Accuracy@1: 0.611
-Accuracy@3: 0.722
-Mean Reciprocal Rank: 0.662
+Consultas avaliadas: 152
+Accuracy@1: 0.645
+Accuracy@3: 0.803
+Mean Reciprocal Rank: 0.718
 ```
 
 Essas métricas podem variar se a base de FAQs, as consultas de teste ou os parâmetros forem alterados.
@@ -206,4 +208,3 @@ Os testes cobrem:
 ## Licença
 
 Este projeto segue a licença definida no arquivo `LICENSE`.
-
