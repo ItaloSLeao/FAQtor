@@ -5,11 +5,12 @@ respostas cadastradas em `data/faq.csv`, sem LLMs ou APIs externas. A busca
 principal usa embeddings semânticos; o TF-IDF original permanece como baseline
 de comparação.
 
-## Instalação
+## Instalação após baixar o repositório
 
 Requer Python 3.12 ou superior.
 
 ```bash
+cd FAQtor
 python3 -m venv .venv
 source .venv/bin/activate
 python -m pip install --upgrade pip
@@ -22,18 +23,15 @@ CPU-only.
 ## Execução
 
 ```bash
-# Interface web
-streamlit run app.py
+# CLI interativa
+python faq-cli.py
 
-# Busca pela linha de comando
+# Busca única pela linha de comando
 python main.py search "como faço matrícula?"
 python main.py search "como trancar uma disciplina?" --top-k 5 --threshold 0.54
 
 # Avaliação comparativa entre TF-IDF e embeddings
 python main.py evaluate
-
-# CLI interativa
-python faq-cli.py
 
 # Testes automatizados
 pytest
