@@ -9,10 +9,13 @@ env/
 ENV/
 
 .pytest_cache/
+.cache/
 .mypy_cache/
 .ruff_cache/
 .coverage
 htmlcov/
+
+data/cache/
 
 .ipynb_checkpoints/
 
@@ -21,4 +24,3 @@ Thumbs.db
 
 *.log
 *.tmp
-
