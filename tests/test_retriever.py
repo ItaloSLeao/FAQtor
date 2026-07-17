@@ -3,7 +3,7 @@
 import pandas as pd
 
 from src.config import FALLBACK_MESSAGE
-from src.retriever import FAQRetriever
+from src.retriever import FAQRetriever, TfidfRetriever
 
 
 def make_retriever(confidence_threshold: float = 0.2) -> FAQRetriever:
@@ -40,6 +40,14 @@ def test_search_returns_ranked_results() -> None:
     assert response["top_result"]["id"] == 2
     assert len(response["results"]) == 2
     assert response["results"][0]["score"] >= response["results"][1]["score"]
+    assert response["method"] == "tfidf"
+    assert response["top_result"]["method"] == "tfidf"
+    assert response["top_result"]["index"] == 1
+    assert response["top_result"]["rank"] == 1
+
+
+def test_original_faq_retriever_name_preserves_tfidf_baseline() -> None:
+    assert FAQRetriever is TfidfRetriever
 
 
 def test_search_returns_fallback_for_distant_query() -> None:
