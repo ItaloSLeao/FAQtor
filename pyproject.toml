@@ -2,17 +2,17 @@
 name = "faqtor"
 version = "0.1.0"
 description = "Chatbot academico de FAQ baseado em recuperacao de informacao."
-requires-python = ">=3.11"
+requires-python = ">=3.12"
 readme = "README.md"
 dependencies = [
     "pandas>=2.2",
     "numpy>=1.26",
     "scikit-learn>=1.4",
+    "sentence-transformers>=3.0",
     "streamlit>=1.36",
-    "matplotlib>=3.8",
+    "rich>=13.7",
 ]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 pythonpath = ["."]
-
