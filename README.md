@@ -1,61 +1,36 @@
 # FAQtor
 
-FAQtor é um sistema acadêmico de perguntas frequentes que recupera somente
-respostas cadastradas em `data/faq.csv`, sem LLMs ou APIs externas. A busca
-principal usa embeddings semânticos; o TF-IDF original permanece como baseline
-de comparação.
+Semantic FAQ retrieval system built without LLMs or external APIs. Answers are matched against a curated dataset using dense sentence embeddings, with TF-IDF as a comparative baseline.
 
-## Instalação após baixar o repositório
+## Tech Stack
 
-Requer Python 3.12 ou superior.
+- **Language**: Python 3.12+
+- **Embeddings**: `sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2` (CPU-only, cached locally)
+- **Similarity**: Cosine similarity via dot product on normalized vectors
+- **Baseline**: TF-IDF with unigrams and bigrams
+
+## Key Features
+
+- Semantic search over 156 FAQ entries with a calibrated similarity threshold (0.54)
+- Persistent embedding cache validated by question hash and model revision
+- Comparative evaluation report (embeddings vs. TF-IDF) with false positive/negative analysis
+- CLI interface for both interactive and single-query modes
+
+## Setup
 
 ```bash
-cd FAQtor
-python3 -m venv .venv
-source .venv/bin/activate
-python -m pip install --upgrade pip
+python3 -m venv .venv && source .venv/bin/activate
 pip install -r requirements.txt
 ```
 
-O `requirements.txt` usa o índice oficial do PyTorch para instalar a versão
-CPU-only.
-
-## Execução
+## Usage
 
 ```bash
-# CLI interativa
-python faq-cli.py
-
-# Busca única pela linha de comando
-python main.py search "como faço matrícula?"
-python main.py search "como trancar uma disciplina?" --top-k 5 --threshold 0.54
-
-# Avaliação comparativa entre TF-IDF e embeddings
-python main.py evaluate
-
-# Testes automatizados
-pytest
+python faq-cli.py                                              # interactive CLI
+python main.py search "how do I enroll?"                       # single query
+python main.py search "how do I drop a course?" --top-k 5     # with options
+python main.py evaluate                                        # run comparison report
+pytest                                                         # automated tests
 ```
 
-## Primeiro carregamento
-
-Na primeira busca, o `sentence-transformers` baixa o modelo
-`sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2`. Essa etapa exige
-internet uma única vez; depois, o modelo é reutilizado pelo cache local do
-Hugging Face sem tentar acessar a rede. A revisão avaliada dos pesos está fixada
-na configuração para manter os resultados reproduzíveis.
-
-As 156 perguntas são convertidas em embeddings densos normalizados e comparadas
-à consulta por produto escalar, equivalente à similaridade de cosseno. O cache
-persistente em `data/cache/` é validado por hash das perguntas e pelo nome do
-modelo e sua revisão, sendo regenerado automaticamente quando necessário. A
-resposta só é retornada quando a similaridade alcança o limiar configurado de
-`0.54`. O relatório de avaliação inclui o sweep usado para calibrar esse valor e
-expõe falsos positivos e falsos negativos; o limiar reduz, mas não elimina, erros.
-
-O TF-IDF usa correspondência lexical com unigramas e bigramas e é executado
-separadamente pelo comando de avaliação.
-
-## Licença
-
-Este projeto segue a licença definida no arquivo `LICENSE`.
+> On first run, the model weights are downloaded once and cached locally by Hugging Face.
